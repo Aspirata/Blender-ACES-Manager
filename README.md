@@ -1,42 +1,56 @@
-# [Readme EN](README_en.md)
+# Languages: [🇷🇺 RU](README_ru.md) | [🇺🇸 **EN**](README.md)
 
 # Blender ACES Manager
 
-Blender ACES Manager — это простая программа для управления ACES в Blender.
+**Blender ACES Manager** is a lightweight utility designed to easily manage **ACES color configurations** in **Blender**.
 
-## Что такое ACES
+---
 
-**ACES (Academy Color Encoding System)** — это стандартизированная система управления цветом, широко используемая в киноиндустрии и индустрии визуальных эффектов. ACES обеспечивает единообразные, точные и естественные цвета на разных устройствах и в различных рабочих процессах, что делает её незаменимым инструментом для профессиональной цветокоррекции и рендеринга.
+## 🎨 What is ACES?
 
-**Проще говоря**: ACES делает картинку красивее, как в голливудских фильмах.
+**ACES (Academy Color Encoding System)** is an industry-standard color management system used in film and visual effects production.  
+It provides consistent, accurate, and natural-looking colors across different devices, making it essential for professional color grading and rendering.
 
-## Предустановленные версии ACES
+**In simple terms:**  
+ACES makes your renders look more cinematic — like in Hollywood movies.
+
+---
+
+## 📦 Preinstalled ACES Versions
 
 - **ACES 1.3 Pro**  
-  Версия ACES 1.3, совместимая со стандартной системой управления цветом Blender 4.1.  
-  *Примечание: источник ACES 1.3 Pro не задокументирован, поэтому ссылка на загрузку отсутствует.*
+  A version of ACES 1.3 compatible with Blender 4.1’s default color management.  
+  *Note: The source of this version is unknown, so no official download link is provided.*
 
 - **[PixelManager v2.0](https://github.com/Joegenco/PixelManager/releases/tag/v.2.0-RC4)**  
-  Обновлённый набор файлов управления цветом с поддержкой ACES 1.3, ACES 2.0 и стандартной системы управления цветом Blender 4.4.
+  An updated set of color management files supporting **ACES 1.3**, **ACES 2.0**, and **Blender 4.4’s default** color management system.
 
-Вы можете собрать программу с любым ACES или другим цветовым менеджером — достаточно лишь поместить их в папку **ACES**.
+You can also use your own ACES or other color management configurations — just place them inside the **`ACES`** folder before building.
 
-## Возможности
+---
 
-- **Простая установка и удаление ACES**
-- **Автоматическое резервное копирование оригинальной системы управления цветом Blender**
-- **Совместимость с актуальными версиями Blender (3.6+)**
+## ⚙️ Features
 
-## Зависимости для сборки
+- 🧩 One-click **install** and **uninstall** of ACES  
+- 💾 **Automatic backup** of Blender’s original color management files  
+- 🧠 Full **compatibility** with Blender **3.6 and newer**  
+- 🔧 Simple structure — works out of the box  
 
-- **Python**: версия 3.8 или выше (рекомендуется 3.12)  
-- **PySide**: версия 6.9.1  
-- **Nuitka**: версия 2.7.12  
-- **ordered-set**: версия 4.1.0  
-- **zstandard**: версия 0.23.0  
+---
 
-*P.S.*: Скрипт `build.cmd` установит все зависимости, кроме Python.
+## 🛠️ Build Requirements
 
-## Лицензия
+To build Blender ACES Manager yourself, make sure you have:
 
-Проект распространяется под лицензией MIT. Подробнее можно узнать [здесь](LICENSE).  
+- **Python** ≥ 3.8 (✅ *3.12 recommended*)  
+- **PySide6** = 6.9.1  
+- **Nuitka** = 2.7.12  
+
+> 💡 Tip: You can use the included `build.cmd` script — it will install all dependencies automatically (except Python).
+
+---
+
+## 📄 License
+
+This project is distributed under the **MIT License**.  
+See more details in the [LICENSE](LICENSE) file.
