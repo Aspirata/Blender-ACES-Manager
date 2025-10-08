@@ -1,4 +1,4 @@
-# Languages: [🇷🇺 RU](README_ru.md) | [🇺🇸 *EN*](README.md)
+# Languages: [🇷🇺 *RU*](README_ru.md) | [🇺🇸 EN](README.md)
 
 # Blender ACES Manager
 
