@@ -1,11 +1,11 @@
-import string, sys, os, re, shutil, py7zr, json, tempfile, platform
+import string, sys, os, re, shutil, py7zr, json, tempfile, platform, locale
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import QThread, Signal
 from ui_blender_aces_manager import Ui_MainWindow
 
 
 # ============================================
-# Path and Config Utils
+# Utils
 # ============================================
 
 def get_app_path() -> str:
@@ -59,6 +59,51 @@ def add_custom_path(path: str) -> None:
         custom_paths.append(path)
         save_custom_paths(custom_paths)
 
+def translate_text(text: str) -> str:
+    is_english = False
+    translations_dict = {
+        "Blender Version:": "Версия Blender:",
+        "ACES Version:": "Версия ACES:",
+        "Waiting...": "Ожидание...",
+        "Install ACES": "Установить ACES",
+        "Uninstall ACES": "Удалить ACES",
+
+        "Creating backup...": "Создание бэкапа...",
+        "Installing ACES...": "Установка ACES...",
+        "ACES installed": "ACES установлен",
+        "Removing ACES...": "Удаление ACES...",
+        "ACES removed": "ACES удален",
+        "Unexpected error:": "Непредвиденная ошибка:",
+        "Backup error:": "Ошибка бэкапа:",
+        "Install error:": "Ошибка установки:",
+        "Uninstall error:": "Ошибка удаления:",
+
+        "Error": "Ошибка",
+        "Not Found": "Не найдено",
+        "Failed to find Blender files, manual path selection required": "Не удалось найти файлы блендера, требуется ручное указание пути",
+        "colormanagement backup not found. You need to install ACES first to create a backup": "Бэкап colormanagement не найден. Необходимо сначала установить ACES для создания бэкапа",
+        "Choose Blender colormanagement folder": "Выберите папку Blender colormanagement",
+        'Please select the colormanagement folder, for example: "Blender\\5.0\\datafiles\\colormanagement"': 'Необходимо выбрать папку colormanagement, например "Blender\\5.0\\datafiles\\colormanagement"'
+    }
+
+    if platform.system() == "Windows":
+        try:
+            lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
+            if lang.startswith('en'):
+                is_english = True
+        except Exception:
+            pass
+    else:
+        for var in ('LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES'):
+            val = os.environ.get(var, '')
+            if val.startswith('en'):
+                is_english = True
+    
+    if is_english:
+        return text
+
+    return translations_dict.get(text, text)
+
 
 # ============================================
 # Blender and ACES Version Search
@@ -94,7 +139,9 @@ def find_blender_versions() -> list[str]:
 
 def find_aces_versions() -> list[str]:
     aces_path = os.path.join(get_app_path(), "ACES")
-    aces_files = [f[:-3] for f in os.listdir(aces_path)]
+
+    # Get list of files and folders: remove extension from files, keep folder names as is
+    aces_files = [os.path.splitext(f)[0] if os.path.isfile(os.path.join(aces_path, f)) else f for f in os.listdir(aces_path)]
     return sorted(aces_files)
 
 
@@ -128,6 +175,8 @@ def create_colormanagement_backup(path: str) -> str:
 
 
 def install_aces(blender_version_path: str, aces_version_path: str) -> str:
+    if os.path.isdir(aces_version_path):
+        return "ACES version path is a directory, expected a .7z file"
     try:
         with py7zr.SevenZipFile(aces_version_path, mode='r') as archive:
             archive.extractall(path=blender_version_path)
@@ -166,35 +215,35 @@ class ACESWorker(QThread):
             elif self.operation_type == "uninstall":
                 self._uninstall()
         except Exception as e:
-            self.operation_finished.emit(f"Unexpected error: {str(e)}")
+            self.operation_finished.emit(f"{translate_text("Unexpected error:")} {str(e)}")
     
     def _install(self):
-        self.progress_update.emit("Создание бэкапа...")
+        self.progress_update.emit(translate_text("Creating backup..."))
         backup_result = create_colormanagement_backup(self.blender_path)
         
         if backup_result != "Success":
-            self.operation_finished.emit(f"Backup error: {backup_result}")
+            self.operation_finished.emit(f"{translate_text("Backup error:")} {backup_result}")
             return
         
-        self.progress_update.emit("Установка ACES...")
+        self.progress_update.emit(translate_text("Installing ACES..."))
         install_result = install_aces(self.blender_path, self.aces_path)
         
         if install_result != "Success":
-            self.operation_finished.emit(f"Install error: {install_result}")
+            self.operation_finished.emit(f"{translate_text("Install error:")} {install_result}")
             return
         
-        self.progress_update.emit("ACES установлен")
+        self.progress_update.emit(translate_text("ACES installed"))
         self.operation_finished.emit("Success")
     
     def _uninstall(self):
-        self.progress_update.emit("Удаление ACES...")
+        self.progress_update.emit(translate_text("Removing ACES..."))
         uninstall_result = uninstall_aces(self.blender_path)
         
         if uninstall_result != "Success":
-            self.operation_finished.emit(f"Uninstall error: {uninstall_result}")
+            self.operation_finished.emit(f"{translate_text("Uninstall error:")} {uninstall_result}")
             return
         
-        self.progress_update.emit("ACES удален")
+        self.progress_update.emit(translate_text("ACES removed"))
         self.operation_finished.emit("Success")
 
 
@@ -210,9 +259,18 @@ class MainWindow(QMainWindow):
         
         self.worker = None
         
+        self.translate_gui()
         self.init_blender_versions()
         self.init_aces_versions()
         self.connect_signals()
+    
+    def translate_gui(self):
+        self.ui.blender_version_label.setText(translate_text("Blender Version:"))
+        self.ui.aces_version_label.setText(translate_text("ACES Version:"))
+        self.ui.progress_label.setText(translate_text("Waiting..."))
+        self.ui.install_button.setText(translate_text("Install ACES"))
+        self.ui.uninstall_button.setText(translate_text("Uninstall ACES"))
+        self.ui.blender_versions_combobox.setPlaceholderText(translate_text("Not Found"))
     
     def init_blender_versions(self):
         blender_versions = find_blender_versions()
@@ -224,8 +282,8 @@ class MainWindow(QMainWindow):
             self.ui.blender_versions_combobox.addItems(all_paths)
             self.ui.blender_versions_combobox.setCurrentIndex(blender_versions_default_index)
         else:
-            QMessageBox.critical(self, "Ошибка",
-                f'Не удалось найти файлы блендера, требуется ручное указание пути'
+            QMessageBox.critical(self, translate_text("Error"),
+                translate_text('Failed to find Blender files, manual path selection required')
             )
     
     def init_aces_versions(self):
@@ -262,16 +320,16 @@ class MainWindow(QMainWindow):
             self.ui.uninstall_button.setToolTip("")
         else:
             self.ui.uninstall_button.setEnabled(False)
-            self.ui.uninstall_button.setToolTip("Бэкап colormanagement не найден. Необходимо сначала установить ACES для создания бэкапа.")
+            self.ui.uninstall_button.setToolTip(translate_text("colormanagement backup not found. You need to install ACES first to create a backup"))
     
     def blender_versions_browse(self) -> str:
-        colormanagement_path = QFileDialog.getExistingDirectory(self, "Выберите папку Blender Colormanagement")
+        colormanagement_path = QFileDialog.getExistingDirectory(self, translate_text("Choose Blender colormanagement folder"))
         if not colormanagement_path:
             return "Fail"
         
         if "colormanagement" not in colormanagement_path:
-            QMessageBox.critical(self, "Ошибка",
-                f'Необходимо выбрать папку colormanagement, например "Blender\\5.0\\datafiles\\colormanagement"'
+            QMessageBox.critical(self, translate_text("Error"),
+                translate_text('Please select the colormanagement folder, for example: "Blender\\5.0\\datafiles\\colormanagement"')
             )
             return "Fail"
         
@@ -286,7 +344,7 @@ class MainWindow(QMainWindow):
 
     def execute_install_aces(self, blender_version_path: str, aces_version_path: str) -> None:
         aces_version_path = os.path.join(get_app_path(), "ACES", f"{aces_version_path}.7z")
-        
+
         self.worker = ACESWorker("install", blender_version_path, aces_version_path)
         self.worker.progress_update.connect(self.ui.progress_label.setText)
         self.worker.operation_finished.connect(self.on_install_finished)
@@ -306,16 +364,18 @@ class MainWindow(QMainWindow):
         self.set_ui_enabled(True)
         
         if result != "Success":
-            QMessageBox.critical(self, "Ошибка",
-                f'Не удалось установить ACES:\n{result}'
+            print(result)
+            QMessageBox.critical(self, translate_text("Error"),
+                result
             )
 
     def on_uninstall_finished(self, result: str) -> None:
         self.set_ui_enabled(True)
         
         if result != "Success":
-            QMessageBox.critical(self, "Ошибка",
-                f'Не удалось удалить ACES:\n{result}'
+            print(result)
+            QMessageBox.critical(self, translate_text("Error"),
+                result
             )
 
 

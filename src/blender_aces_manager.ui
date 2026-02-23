@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>553</width>
-    <height>138</height>
+    <height>140</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,7 +42,7 @@
           <item>
            <widget class="QLabel" name="blender_version_label">
             <property name="text">
-             <string>Версия Блендера:</string>
+             <string>Blender Version:</string>
             </property>
            </widget>
           </item>
@@ -93,7 +93,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Версия ACES:</string>
+           <string>ACES Version:</string>
           </property>
          </widget>
         </item>
@@ -115,7 +115,7 @@
       <item>
        <widget class="QLabel" name="progress_label">
         <property name="text">
-         <string>Ожидание действий...</string>
+         <string>Waiting...</string>
         </property>
        </widget>
       </item>
@@ -127,14 +127,14 @@
            <enum>Qt::LayoutDirection::LeftToRight</enum>
           </property>
           <property name="text">
-           <string>Установить ACES</string>
+           <string>Install ACES</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="uninstall_button">
           <property name="text">
-           <string>Удалить ACES</string>
+           <string>Uninstall ACES</string>
           </property>
          </widget>
         </item>

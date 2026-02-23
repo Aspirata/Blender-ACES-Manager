@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'blender_aces_managermigShC.ui'
+## Form generated from reading UI file 'blender_aces_manageryETNPC.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(553, 138)
+        MainWindow.resize(553, 140)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(138)
@@ -129,17 +129,17 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Blender ACES Installer", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Blender ACES Manager", None))
 #if QT_CONFIG(whatsthis)
         self.centralwidget.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><br/></p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
-        self.blender_version_label.setText(QCoreApplication.translate("MainWindow", u"\u0412\u0435\u0440\u0441\u0438\u044f \u0411\u043b\u0435\u043d\u0434\u0435\u0440\u0430:", None))
+        self.blender_version_label.setText(QCoreApplication.translate("MainWindow", u"Blender Version:", None))
         self.blender_versions_combobox.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Not Found", None))
         self.blender_versions_browse_button.setText("")
-        self.aces_version_label.setText(QCoreApplication.translate("MainWindow", u"\u0412\u0435\u0440\u0441\u0438\u044f ACES:", None))
+        self.aces_version_label.setText(QCoreApplication.translate("MainWindow", u"ACES Version:", None))
         self.aces_versions_combobox.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Aboba", None))
-        self.progress_label.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0436\u0438\u0434\u0430\u043d\u0438\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0439...", None))
-        self.install_button.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c ACES", None))
-        self.uninstall_button.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c ACES", None))
+        self.progress_label.setText(QCoreApplication.translate("MainWindow", u"Waiting...", None))
+        self.install_button.setText(QCoreApplication.translate("MainWindow", u"Install ACES", None))
+        self.uninstall_button.setText(QCoreApplication.translate("MainWindow", u"Uninstall ACES", None))
     # retranslateUi
 
