@@ -60,7 +60,7 @@ def add_custom_path(path: str) -> None:
         save_custom_paths(custom_paths)
 
 def translate_text(text: str) -> str:
-    is_english = False
+    use_russian = False
     translations_dict = {
         "Blender Version:": "Версия Blender:",
         "ACES Version:": "Версия ACES:",
@@ -89,17 +89,17 @@ def translate_text(text: str) -> str:
     if platform.system() == "Windows":
         try:
             lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
-            is_english = lang.startswith('en')
+            use_russian = lang.startswith('ru')
         except Exception:
             pass
     else:
         for var in ('LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES'):
             val = os.environ.get(var, '')
-            if val.startswith('en'):
-                is_english = True
+            if val.startswith('ru'):
+                use_russian = True
                 break
     
-    if is_english:
+    if not use_russian:
         return text
 
     return translations_dict.get(text, text)
