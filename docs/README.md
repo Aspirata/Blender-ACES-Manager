@@ -2,10 +2,13 @@
 
 # Blender ACES Manager
 
-![GitHub downloads](https://img.shields.io/github/downloads/Aspirata/Blender-ACES-Manager/total)
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/release/python-31210/)
+[![License](https://img.shields.io/badge/License-GPLv3-orange.svg)](./LICENSE)
+[![GitHub downloads](https://img.shields.io/github/downloads/Aspirata/Blender-ACES-Manager/total)](https://github.com/Aspirata/Blender-ACES-Manager/releases)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/y4CWTzbZcv)
 
-> [!CAUTION]
-> Blender 5.0 has built-in ACES 1.3 and 2.0, you don't need an external app anymore
+> [!WARNING]
+> Blender 5.0+ has built-in ACES 1.3 and 2.0, you don't need an external app anymore
 
 **Blender ACES Manager** is a lightweight utility designed to easily manage **ACES color configurations** in **Blender**.
 
@@ -21,25 +24,26 @@ ACES makes your renders look more cinematic — like in Hollywood movies.
 
 ---
 
-## 📦 Preinstalled ACES Versions
-
-- **ACES 1.3 Pro**  
-  A version of ACES 1.3 compatible with Blender 4.1’s default color management.  
-  *Note: The source of this version is unknown, so no official download link is provided.*
-
-- **[PixelManager v2.0 RC6](https://github.com/Joegenco/PixelManager/releases/tag/v.2.0-RC6)**  
-  An updated set of color management files supporting **ACES 1.3**, **ACES 2.0**, and **Blender 4.4’s default** color management system.
-
-You can also use your own ACES or other color management configurations — just place them and archive into .zip inside the **`ACES`** folder before building.
-
----
-
 ## ⚙️ Features
 
 - 🧩 One-click **install** and **uninstall** of ACES  
 - 💾 **Automatic backup** of Blender’s original color management files  
 - 🧠 Full **compatibility** with Blender **3.6 and newer**  
 - 🔧 Simple structure — works out of the box  
+
+## 📦 Preinstalled ACES Versions
+- **[PixelManager v2.0 RC6](https://github.com/Joegenco/PixelManager/releases/tag/v.2.0-RC6)**  
+  An updated set of color management files supporting **ACES 1.3**, **ACES 2.0**, and **Blender 4.4’s default** color management system.
+
+You can also use your own ACES or other color management configurations — just place them and archive into .7z inside the **`ACES`** folder before building.
+
+## 🖥️ OS Support
+
+| OS          | Status          | Details                                                                 |
+|-------------|-----------------|-----------------------------------------------------------------------------|
+| **Windows** | Works best ✅     | Full support                                           |
+| **macOS**   | Works fine ✅      | Works fine but needs some testing                        |
+| **Linux**   | Doesn't work at all ❌ | Blender ACES Manager doesn't support and doesn't work on Linux |
 
 ---
 
@@ -48,8 +52,10 @@ You can also use your own ACES or other color management configurations — just
 To build Blender ACES Manager yourself, make sure you have:
 
 - **Python** = 3.12  
-- **PySide6** = 6.10.1  
-- **Nuitka** = 2.8.9  
+- **PySide6** = 6.10.2  
+- **nuitka** = 4.0.1  
+- **zstandard** = 0.25.0  
+- **py7zr** = 1.1.0  
 
 > 💡 Tip: You can use the included `build.cmd` script — it will install all dependencies automatically (except Python).
 
@@ -57,5 +63,5 @@ To build Blender ACES Manager yourself, make sure you have:
 
 ## 📄 License
 
-This project is distributed under the **MIT License**.  
-See more details in the [LICENSE](LICENSE) file.
+This project is distributed under the **GPLv3** License.  
+See more details in the [LICENSE](./LICENSE) file.
