@@ -89,8 +89,7 @@ def translate_text(text: str) -> str:
     if platform.system() == "Windows":
         try:
             lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
-            if lang.startswith('en'):
-                is_english = True
+            is_english = lang.startswith('en')
         except Exception:
             pass
     else:
@@ -98,6 +97,7 @@ def translate_text(text: str) -> str:
             val = os.environ.get(var, '')
             if val.startswith('en'):
                 is_english = True
+                break
     
     if is_english:
         return text
