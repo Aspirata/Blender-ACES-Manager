@@ -90,14 +90,15 @@ def translate_text(text: str) -> str:
     if platform.system() == "Windows":
         try:
             lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
-            use_russian = lang.startswith('ru')
+            use_russian = lang.lower().startswith('ru')
             print(f"System Language: {lang}")
         except Exception:
             pass
     else:
         for var in ('LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES'):
             val = os.environ.get(var, '')
-            if val.startswith('ru'):
+            print(f"System Language: {val}")
+            if val.lower().startswith('ru'):
                 use_russian = True
                 break
     
@@ -227,16 +228,20 @@ class ACESWorker(QThread):
             self.operation_finished.emit(f"{translate_text("Unexpected error:")} {str(e)}")
     
     def _install(self):
-        self.progress_update.emit(translate_text("Creating backup..."))
-        backup_result = create_colormanagement_backup(self.blender_path)
-        
-        if backup_result != "Success":
-            self.operation_finished.emit(f"{translate_text("Backup error:")} {backup_result}")
-            return
-        
         self.progress_update.emit(translate_text("Installing ACES..."))
-        install_result = install_aces(self.blender_path, self.aces_path)
+        if not os.path.join(os.path.dirname(self.blender_path), f"{os.path.basename(self.blender_path)}_backup"):
+            backup_result = create_colormanagement_backup(self.blender_path)
+            if backup_result != "Success":
+                self.operation_finished.emit(f"{translate_text("Backup error:")} {backup_result}")
+                return
+
+        else:
+            uninstall_result = uninstall_aces(self.blender_path)
+            if uninstall_result != "Success":
+                self.operation_finished.emit(f"{translate_text("Uninstall error:")} {uninstall_result}")
+                return
         
+        install_result = install_aces(self.blender_path, self.aces_path)
         if install_result != "Success":
             self.operation_finished.emit(f"{translate_text("Install error:")} {install_result}")
             return
