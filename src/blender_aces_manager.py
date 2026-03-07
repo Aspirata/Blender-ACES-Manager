@@ -90,6 +90,7 @@ def translate_text(text: str) -> str:
         try:
             lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
             use_russian = lang.startswith('ru')
+            print(f"System Language: {lang}")
         except Exception:
             pass
     else:
@@ -99,6 +100,7 @@ def translate_text(text: str) -> str:
                 use_russian = True
                 break
     
+    print("Use Russian:", use_russian)
     if not use_russian:
         return text
 
