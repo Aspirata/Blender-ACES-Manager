@@ -41,9 +41,9 @@ You can also use your own ACES or other color management configurations — just
 
 | OS          | Status          | Details                                                                 |
 |-------------|-----------------|-----------------------------------------------------------------------------|
-| **Windows** | Works best ✅     | Full support                                           |
-| **macOS**   | Works fine ✅      | Works fine but needs some testing                        |
-| **Linux**   | Doesn't work at all ❌ | Blender ACES Manager doesn't support and doesn't work on Linux |
+| **Windows** | Works fine ✅     | Full support                                           |
+| **macOS**   | Works best ✅      | Full support + Automatic Blender.app Detection                        |
+| **Linux**   | Doesn't work ❌ | Blender ACES Manager doesn't support Linux |
 
 ---
 
@@ -55,9 +55,9 @@ To build Blender ACES Manager yourself, make sure you have:
 - **PySide6** = 6.10.2  
 - **nuitka** = 4.0.1  
 - **zstandard** = 0.25.0  
-- **py7zr** = 1.1.0  
+- **py7zr** = 1.1.0
 
-> 💡 Tip: You can use the included `build.cmd` script — it will install all dependencies automatically (except Python).
+> 💡 Tip: You can use the included `build_win.cmd` or `build_mac.sh` script — it will install all dependencies automatically (except Python).
 
 ---
 
