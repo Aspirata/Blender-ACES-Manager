@@ -1,6 +1,7 @@
 import string, sys, os, re, shutil, py7zr, json, tempfile, platform, locale
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QStyle
 from PySide6.QtCore import QThread, Signal
+from PySide6.QtGui import QIcon
 from ui_blender_aces_manager import Ui_MainWindow
 
 
@@ -114,19 +115,25 @@ def translate_text(text: str) -> str:
 def find_blender_versions() -> list[str]:
     os_name = platform.system()
     found_versions = []
+    search_paths = []
     version_pattern = re.compile(r'^\d+\.\d+(\.\d+)?$')
     
     if os_name == "Windows":
-        search_paths = []
         blender_paths = ["Program Files (x86)\\Steam\\steamapps\\common\\Blender", "SteamLibrary\\steamapps\\common\\Blender"]
         for drive_letter in string.ascii_uppercase:
             for blender_path in blender_paths:
                 search_paths.append(os.path.join(f"{drive_letter}:\\", blender_path))
     else:
-        search_paths = [
-            os.path.expanduser("~/Applications/Blender.app/Contents/Resources"),
+        for entry in os.listdir("/Applications"):
+            if "blender" in entry.lower() and entry.endswith(".app"):
+                search_paths.append(
+                    os.path.join("/Applications", entry, "Contents", "Resources")
+                )
+
+        # Steam
+        search_paths.append(
             os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Blender")
-        ]
+        )
 
     for blender_path in search_paths:
         if not os.path.exists(blender_path):
@@ -258,6 +265,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.blender_versions_browse_button.setIcon(
+            QIcon.fromTheme("folder", self.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
+        )
         
         self.worker = None
         
