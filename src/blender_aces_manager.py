@@ -133,7 +133,7 @@ def find_blender_versions() -> list[str]:
 
         # Steam
         search_paths.append(
-            os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Blender")
+            os.path.expanduser("~/Library/Application Support/Steam/steamapps/common/Blender/Blender.app/Contents/Resources")
         )
 
     for blender_path in search_paths:
