@@ -84,7 +84,8 @@ def translate_text(text: str) -> str:
         "Failed to find Blender files, manual path selection required": "Не удалось найти файлы блендера, требуется ручное указание пути",
         "colormanagement backup not found. You need to install ACES first to create a backup": "Бэкап colormanagement не найден. Необходимо сначала установить ACES для создания бэкапа",
         "Choose Blender colormanagement folder": "Выберите папку Blender colormanagement",
-        'Please select the colormanagement folder, for example: "Blender\\5.0\\datafiles\\colormanagement"': 'Необходимо выбрать папку colormanagement, например "Blender\\5.0\\datafiles\\colormanagement"'
+        "Choose Blender.app File": "Выберите файл Blender.app",
+        'Please select a valid path': 'Пожалуйста, выберите правильный путь'
     }
 
     if platform.system() == "Windows":
@@ -340,17 +341,32 @@ class MainWindow(QMainWindow):
             self.ui.uninstall_button.setToolTip(translate_text("colormanagement backup not found. You need to install ACES first to create a backup"))
     
     def blender_versions_browse(self) -> str:
-        colormanagement_path = QFileDialog.getExistingDirectory(self, translate_text("Choose Blender colormanagement folder"))
+        os_name = platform.system()
+        select_dialog_title = translate_text("Choose Blender colormanagement folder") if os_name == "Windows" else translate_text("Choose Blender.app File")
+        guessed_colormanagement_path = ""
+        colormanagement_path = QFileDialog.getExistingDirectory(self, select_dialog_title)
         if not colormanagement_path:
             return "Fail"
+
+        if "colormanagement" not in colormanagement_path or os_name == "Darwin":
+            for blender_version_folder in os.listdir(colormanagement_path):
+                blender_version_folder_path = os.path.join(colormanagement_path, blender_version_folder)
+                if not os.path.isdir(blender_version_folder_path) or not re.match(r'^\d+\.\d+$', blender_version_folder):
+                    continue
+
+                if os.path.exists(os.path.join(blender_version_folder_path, "datafiles", "colormanagement")) or os.path.exists(os.path.join(blender_version_folder_path, "Contents", "Resources")):
+                    guessed_colormanagement_path = os.path.join(blender_version_folder_path, "datafiles", "colormanagement")
+                    break
+
+            if guessed_colormanagement_path and os.path.exists(guessed_colormanagement_path):
+                colormanagement_path = guessed_colormanagement_path
+            else:
+                QMessageBox.critical(self, translate_text("Error"),
+                    translate_text('Please select a valid path')
+                )
+                return "Fail"
         
-        if "colormanagement" not in colormanagement_path:
-            QMessageBox.critical(self, translate_text("Error"),
-                translate_text('Please select the colormanagement folder, for example: "Blender\\5.0\\datafiles\\colormanagement"')
-            )
-            return "Fail"
-        
-        colormanagement_path = colormanagement_path.replace("/", "\\")
+        colormanagement_path = os.path.normpath(colormanagement_path)
         add_custom_path(colormanagement_path)
         
         if self.ui.blender_versions_combobox.findText(colormanagement_path) == -1:
