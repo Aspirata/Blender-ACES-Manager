@@ -92,18 +92,15 @@ def translate_text(text: str) -> str:
         try:
             lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
             use_russian = lang.lower().startswith('ru')
-            print(f"System Language: {lang}")
         except Exception:
             pass
     else:
         for var in ('LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES'):
             val = os.environ.get(var, '')
-            print(f"System Language: {val}")
             if val.lower().startswith('ru'):
                 use_russian = True
                 break
-    
-    print("Use Russian:", use_russian)
+
     if not use_russian:
         return text
 
@@ -229,8 +226,10 @@ class ACESWorker(QThread):
             self.operation_finished.emit(f"{translate_text("Unexpected error:")} {str(e)}")
     
     def _install(self):
+        colormanagement_backup_path = os.path.join(os.path.dirname(self.blender_path), f"{os.path.basename(self.blender_path)}_backup")
+        print(colormanagement_backup_path, os.path.exists(colormanagement_backup_path))
         self.progress_update.emit(translate_text("Installing ACES..."))
-        if not os.path.join(os.path.dirname(self.blender_path), f"{os.path.basename(self.blender_path)}_backup"):
+        if not os.path.exists(colormanagement_backup_path):
             backup_result = create_colormanagement_backup(self.blender_path)
             if backup_result != "Success":
                 self.operation_finished.emit(f"{translate_text("Backup error:")} {backup_result}")
@@ -415,5 +414,23 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
+
+    if platform.system() == "Windows":
+        try:
+            lang = locale.getlocale()[0] or locale.getdefaultlocale()[0] or ''
+            use_russian = lang.lower().startswith('ru')
+            print(f"System Language: {lang}")
+        except Exception:
+            pass
+    else:
+        for var in ('LANG', 'LANGUAGE', 'LC_ALL', 'LC_MESSAGES'):
+            val = os.environ.get(var, '')
+            print(f"System Language: {val}")
+            if val.lower().startswith('ru'):
+                use_russian = True
+                break
+    
+    print("Use Russian:", use_russian)
+
     window.show()
     sys.exit(app.exec())

@@ -4,7 +4,8 @@ set -e
 python3.12 -m pip install --upgrade pip
 python3.12 -m pip install -r requirements.txt
 
-APP_NAME="Blender ACES Manager"
+APP_NAME="blender_aces_manager"
+APP_DISPLAY_NAME="Blender ACES Manager"
 VERSION="5.02"
 SRC="src/blender_aces_manager.py"
 
@@ -19,6 +20,21 @@ python3.12 -m nuitka \
   --include-data-files=src/ACES/*.7z=ACES/ \
   --output-filename="$APP_NAME" \
   "$SRC"
+
+mv "${APP_NAME}.app" "${APP_DISPLAY_NAME}.app"
+
+mkdir -p dmg_staging
+cp -R "${APP_DISPLAY_NAME}.app" dmg_staging/
+ln -s /Applications dmg_staging/Applications
+
+hdiutil create \
+  -volname "$APP_DISPLAY_NAME" \
+  -srcfolder dmg_staging \
+  -ov \
+  -format UDZO \
+  "${APP_NAME}_v${VERSION}.dmg"
+
+rm -rf dmg_staging
 
 echo "Press Enter to exit."
 read
