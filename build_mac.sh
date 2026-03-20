@@ -25,6 +25,7 @@ mv "${APP_NAME}.app" "${APP_DISPLAY_NAME}.app"
 
 mkdir -p dmg_staging
 cp -R "${APP_DISPLAY_NAME}.app" dmg_staging/
+cp -R docs dmg_staging/
 ln -s /Applications dmg_staging/Applications
 
 hdiutil create \
@@ -35,6 +36,7 @@ hdiutil create \
   "${APP_NAME}_v${VERSION}.dmg"
 
 rm -rf dmg_staging
+[ -d "${APP_DISPLAY_NAME}.app" ] && rm -rf "${APP_DISPLAY_NAME}.app"
 
 echo "Press Enter to exit."
 read

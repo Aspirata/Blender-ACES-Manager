@@ -2,8 +2,8 @@ __pycache__
 blender_aces_manager.build
 blender_aces_manager.dist
 blender_aces_manager.onefile-build
-blender_aces_manager.exe
-blender_aces_manager.app
+*.exe
 *.DS_Store
 *.dmg
+*.zip
 *.app

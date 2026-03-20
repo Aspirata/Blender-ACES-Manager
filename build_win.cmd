@@ -1,4 +1,8 @@
 @echo off
+set APP_NAME=blender_aces_manager
+set VERSION=5.02
+
+if exist %APP_NAME%.exe del /f %APP_NAME%.exe
 py -3.12 -m pip install -r requirements.txt
 py -3.12 -m nuitka ^
   --standalone ^
@@ -9,4 +13,6 @@ py -3.12 -m nuitka ^
   --include-data-files=src/ACES/*.7z=ACES/ ^
   --windows-console-mode=disable ^
   src/blender_aces_manager.py
+
+powershell -Command "Compress-Archive -Force -Path '%APP_NAME%.exe', 'docs' -DestinationPath '%APP_NAME%_v%VERSION%.zip'"
 pause
