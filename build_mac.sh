@@ -9,6 +9,12 @@ APP_DISPLAY_NAME="Blender ACES Manager"
 VERSION="5.02"
 SRC="src/blender_aces_manager.py"
 
+echo "Cleaning up previous build artifacts..."
+[ -d "${APP_DISPLAY_NAME}.app" ] && rm -rf "${APP_DISPLAY_NAME}.app"
+[ -d "${APP_NAME}.app" ] && rm -rf "${APP_NAME}.app"
+rm -f "${APP_NAME}"_v*.dmg
+rm -rf dmg_staging
+
 python3.12 -m nuitka \
   --standalone \
   --macos-create-app-bundle \
@@ -36,7 +42,6 @@ hdiutil create \
   "${APP_NAME}_v${VERSION}.dmg"
 
 rm -rf dmg_staging
-[ -d "${APP_DISPLAY_NAME}.app" ] && rm -rf "${APP_DISPLAY_NAME}.app"
 
 echo "Press Enter to exit."
 read

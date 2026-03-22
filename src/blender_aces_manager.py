@@ -1,4 +1,4 @@
-import string, sys, os, re, shutil, py7zr, json, tempfile, platform, locale
+import string, sys, os, re, shutil, py7zr, json, tempfile, platform, locale, subprocess
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QStyle
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtGui import QIcon
@@ -170,14 +170,26 @@ def get_default_aces(aces_versions: list[str], blender_versions_default_path: st
 # ACES File Operations
 # ============================================
 
+def macos_admin(command: str) -> str:
+    escaped = command.replace("\\", "\\\\").replace('"', '\\"')
+    result = subprocess.run(
+        ["osascript", "-e", f'do shell script "{escaped}" with administrator privileges with prompt "Blender ACES Manager requires administrator privileges"'],
+        capture_output=True, text=True
+    )
+    return "Success" if result.returncode == 0 else result.stderr.strip()
+
+
 def create_colormanagement_backup(path: str) -> str:
     try:
         colormanagement_backup_path = os.path.join(os.path.dirname(path), f"{os.path.basename(path)}_backup")
         if os.path.exists(colormanagement_backup_path):
             return "Success"
-        
         shutil.copytree(path, colormanagement_backup_path)
         return "Success"
+    except PermissionError:
+        if platform.system() == "Darwin":
+            return macos_admin(f'cp -rX "{path}" "{colormanagement_backup_path}"')
+        raise
     except Exception as e:
         return str(e)
 
@@ -186,8 +198,19 @@ def install_aces(blender_version_path: str, aces_version_path: str) -> str:
     if os.path.isdir(aces_version_path):
         return "ACES version path is a directory, expected a .7z file"
     try:
+        tmp_dir = tempfile.mkdtemp()
         with py7zr.SevenZipFile(aces_version_path, mode='r') as archive:
-            archive.extractall(path=blender_version_path)
+            archive.extractall(path=tmp_dir)
+        try:
+            if os.path.exists(blender_version_path):
+                shutil.rmtree(blender_version_path)
+            shutil.copytree(tmp_dir, blender_version_path)
+        except PermissionError:
+            if platform.system() == "Darwin":
+                return macos_admin(f'chflags -R nouchg "{blender_version_path}" && rm -rf "{blender_version_path}" && cp -rX "{tmp_dir}/." "{blender_version_path}"')
+            raise
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
         return "Success"
     except Exception as e:
         return str(e)
@@ -198,6 +221,11 @@ def uninstall_aces(blender_version_path: str) -> str:
         shutil.rmtree(blender_version_path)
         shutil.copytree(os.path.join(os.path.dirname(blender_version_path), "colormanagement_backup"), blender_version_path)
         return "Success"
+    except PermissionError:
+        if platform.system() == "Darwin":
+            backup_path = os.path.join(os.path.dirname(blender_version_path), "colormanagement_backup")
+            return macos_admin(f'chflags -R nouchg "{blender_version_path}" && rm -rf "{blender_version_path}" && cp -rX "{backup_path}" "{blender_version_path}"')
+        raise
     except Exception as e:
         return str(e)
 
@@ -227,7 +255,7 @@ class ACESWorker(QThread):
     
     def _install(self):
         colormanagement_backup_path = os.path.join(os.path.dirname(self.blender_path), f"{os.path.basename(self.blender_path)}_backup")
-        print(colormanagement_backup_path, os.path.exists(colormanagement_backup_path))
+        print(colormanagement_backup_path, f"path exists: {os.path.exists(colormanagement_backup_path)}")
         self.progress_update.emit(translate_text("Installing ACES..."))
         if not os.path.exists(colormanagement_backup_path):
             backup_result = create_colormanagement_backup(self.blender_path)
