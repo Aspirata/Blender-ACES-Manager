@@ -6,7 +6,7 @@ python3.12 -m pip install -r requirements.txt
 
 APP_NAME="blender_aces_manager"
 APP_DISPLAY_NAME="Blender ACES Manager"
-VERSION="5.02"
+VERSION="5.1"
 SRC="src/blender_aces_manager.py"
 
 echo "Cleaning up previous build artifacts..."
